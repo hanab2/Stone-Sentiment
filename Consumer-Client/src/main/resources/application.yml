@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: Stone-Sentiment-Consumer-Client
+    name: STONE-SENTIMENT-CONSUMER-CLIENT
   cloud:
     nacos:
       discovery:

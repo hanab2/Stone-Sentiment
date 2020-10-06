@@ -1,0 +1,38 @@
+server:
+  port: 9002
+
+spring:
+  application:
+    name: STONE-SENTIMENT-PROVIDER-ARTICLE
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+  elasticsearch:
+    rest:
+      uris:
+        - 192.168.148.151:9200
+        - 192.168.148.152:9200
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  # 关闭actuator对es健康检查
+  health:
+    elasticsearch:
+      enabled: false
+
+feign:
+  sentinel:
+    enabled: true
+
+

@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     private static final long serialVersionUID = 4795828894458200320L;
     private Long userId;
-    private String userName;
+    private String username;
     private String password;
     private String avatarPath;
     private String email;

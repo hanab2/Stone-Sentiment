@@ -12,13 +12,13 @@ public class UserController {
 
     @GetMapping(value = {"/testUser"})
     public User test(){
-        return User.builder().userId(2L).userName("aafaf").build();
+        return User.builder().userId(2L).username("aafaf").build();
     }
 
     @GetMapping("/test")
     public CommonResultBean<User> test2(){
         CommonResultBean<User> commonResultBean = new CommonResultBean<>();
-        commonResultBean.setData(User.builder().userId(2L).userName("aafaf").build());
+        commonResultBean.setData(User.builder().userId(2L).username("aafaf").build());
         commonResultBean.setCode(200);
         log.info("test被调用");
         return commonResultBean;
