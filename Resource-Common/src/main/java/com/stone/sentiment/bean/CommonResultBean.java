@@ -11,10 +11,10 @@ import java.io.Serializable;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommonResultBean<T> implements Serializable {
+public class CommonResultBean implements Serializable {
     private static final long serialVersionUID = -998779006096862666L;
     private Integer code;
     private String message;
     private Boolean isSuccessful;
-    private T data;
+    private Object data;
 }

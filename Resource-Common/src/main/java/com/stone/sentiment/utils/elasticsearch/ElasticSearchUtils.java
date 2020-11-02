@@ -62,18 +62,6 @@ public class ElasticSearchUtils {
 
     public <T> ElasticPageResult termsSearchWithPageByObjectPortrayal(T data, int pageNum, int pageSize) {
         Class<?> targetClass = data.getClass();
-//        for (Field field : targetClass.getFields()) {
-//            field.setAccessible(true);
-//            Object fieldValue = null;
-//            try {
-//                fieldValue = field.get(targetClass);
-//            } catch (IllegalAccessException e) {
-//                e.printStackTrace();
-//            }
-//            if(fieldValue != null){
-//                boolQueryBuilder.must(QueryBuilders.termQuery(field.getName(),fieldValue));
-//            }
-//        }
         List<TermQueryBuilder> termQueryBuilderList = Arrays.stream(targetClass.getFields())
                 //  反射获取对象画像的非空字段值
                 .map(field -> {
@@ -95,7 +83,7 @@ public class ElasticSearchUtils {
                 .collect(Collectors.toList());
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         //  把查询条件加入，设置为全满足查询条件参返回数据
-        boolQueryBuilder.must().addAll(termQueryBuilderList);
+        boolQueryBuilder.filter().addAll(termQueryBuilderList);
         NativeSearchQuery searchQuery = new NativeSearchQuery(boolQueryBuilder);
         return searchWithPage(searchQuery, targetClass, pageNum, pageSize);
     }
