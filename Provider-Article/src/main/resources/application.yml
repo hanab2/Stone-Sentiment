@@ -1,3 +1,7 @@
+snowflake:
+  workerId: 1
+  datacenterId: 1
+  
 server:
   port: 9002
 

@@ -7,16 +7,6 @@ server:
   port: 9001
 
 spring:
-  application:
-    name: STONE-SENTIMENT-PROVIDER-USER
-  cloud:
-    nacos:
-      discovery:
-        server-addr: localhost:8848
-    sentinel:
-      transport:
-        dashboard: localhost:8080
-        port: 8719
   datasource:
     url: jdbc:mysql://localhost:3306/stone?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
     username: root
@@ -24,9 +14,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
-#      url: jdbc:mysql://localhost:3306/stone?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
-#      username: root
-#      password: 123456
+      #      url: jdbc:mysql://localhost:3306/stone?serverTimezone=Asia/Shanghai&characterEncoding=UTF-8
+      #      username: root
+      #      password: 123456
       initial-size: 5
       minIdle: 5
       maxActive: 20
@@ -59,11 +49,6 @@ management:
       exposure:
         include: '*'
 
-# 开启sentinel对feign支持
-feign:
-  sentinel:
-    enabled: true
-
 
 mybatis-plus:
   configuration:
@@ -72,4 +57,4 @@ mybatis-plus:
     db-config:
       logic-delete-value: 1
       logic-not-delete-value: 0
-      logic-delete-field: status
+      logic-delete-field: statusCode

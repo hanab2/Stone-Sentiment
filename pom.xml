@@ -14,6 +14,7 @@
         <module>Consumer-Client</module>
         <module>Provider-Article</module>
         <module>Provider-User</module>
+        <module>Stone-Spider</module>
     </modules>
 
     <properties>
@@ -161,6 +162,17 @@
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
                 <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>us.codecraft</groupId>
+                <artifactId>webmagic-core</artifactId>
+                <version>0.7.3</version>
+            </dependency>
+            <dependency>
+                <groupId>us.codecraft</groupId>
+                <artifactId>webmagic-extension</artifactId>
+                <version>0.7.3</version>
             </dependency>
 
 

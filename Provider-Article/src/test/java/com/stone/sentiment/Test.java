@@ -1,5 +1,6 @@
 package com.stone.sentiment;
 
+import cn.hutool.core.lang.Snowflake;
 import com.stone.sentiment.model.Article;
 import com.stone.sentiment.utils.elasticsearch.ElasticPageResult;
 import com.stone.sentiment.utils.elasticsearch.ElasticSearchUtils;
@@ -15,18 +16,20 @@ public class Test {
 
     @Resource
     ElasticSearchUtils elasticSearchUtils;
+    @Resource
+    Snowflake snowflake;
 
     @org.junit.jupiter.api.Test
     void test() {
         Article article = Article.builder()
-                .articleId(1L)
-                .authorId(1L)
-                .body("测试")
+                .articleId(snowflake.nextId())
+                .authorId(snowflake.nextId())
+                .body("测试展示")
                 .createTime(new Date())
                 .updateTime(new Date())
                 .status( 0)
-                .title("测试第一个")
-                .tagList(new ArrayList<String>(Arrays.asList("体育", "音乐")))
+                .title("测试第n个")
+                .tagList(new ArrayList<String>(Arrays.asList("体育","中国")))
                 .build();
         Article save = elasticSearchUtils.save(article);
         System.out.println(save);
