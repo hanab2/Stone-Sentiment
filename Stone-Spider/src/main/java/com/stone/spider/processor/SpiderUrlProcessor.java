@@ -8,15 +8,15 @@ import us.codecraft.webmagic.processor.PageProcessor;
 import us.codecraft.webmagic.selector.Json;
 
 @Component
-public class StoneSpiderProcessor implements PageProcessor {
+public class SpiderUrlProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        System.out.println(page.getHtml().toString());
+        //System.out.println(page.getHtml().toString());
         Json json = new Json(StrUtil.strip(page.getJson().get(), "(", ")"));
-        json.jsonPath("$.data.list[*].LinkUrl").all()
-                .forEach(System.out::println);
-
+//        json.jsonPath("$.data.list[*].LinkUrl").all()
+//                .forEach(System.out::println);
+        page.putField("urlList",json.jsonPath("$.data.list[*].LinkUrl").all());
     }
 
     @Override

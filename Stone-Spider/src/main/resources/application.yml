@@ -58,3 +58,6 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       logic-delete-field: statusCode
+#logging:
+#  level:
+#    com.stone.spider: debug

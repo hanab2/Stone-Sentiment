@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,8 +17,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @TableName(value = "store_url")
-public class StoreURL {
+public class StoreUrl implements Serializable {
 
+    private static final long serialVersionUID = 5329481595852900002L;
     @TableId(value = "id",type = IdType.INPUT)
     private Long id;
     private String url;
