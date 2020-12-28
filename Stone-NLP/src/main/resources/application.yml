@@ -1,0 +1,6 @@
+stone:
+  nlp:
+    emotionModelPath: data/model/emotition-model.ser
+    emotionModelFolder: data/model/ChnSentiCorp
+    classificationModelPath: data/model/classification-model.ser
+    classificationModelFolder: data/model/搜狗文本分类语料库迷你版
