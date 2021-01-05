@@ -16,6 +16,7 @@
         <module>Provider-User</module>
         <module>Stone-Spider</module>
         <module>Stone-NLP</module>
+        <module>Stone-ES</module>
     </modules>
 
     <properties>
@@ -145,6 +146,12 @@
                         <artifactId>junit-vintage-engine</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-aop</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
             <dependency>

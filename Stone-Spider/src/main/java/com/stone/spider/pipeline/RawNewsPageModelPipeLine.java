@@ -14,7 +14,6 @@ import us.codecraft.webmagic.pipeline.PageModelPipeline;
 
 import javax.annotation.Resource;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class RawNewsPageModelPipeLine implements PageModelPipeline<RawNews> {
@@ -73,12 +72,11 @@ public class RawNewsPageModelPipeLine implements PageModelPipeline<RawNews> {
 //                e.printStackTrace();
 //            }
 //        }
-
+//        elasticsearchRestTemplate.save(rawNews);
+//        System.out.println(rawNews);
         all.thenRun(() -> {
             System.out.println(rawNews);
             elasticsearchRestTemplate.save(rawNews);
         });
-//        elasticsearchRestTemplate.save(rawNews);
-//        System.out.println(rawNews);
     }
 }
