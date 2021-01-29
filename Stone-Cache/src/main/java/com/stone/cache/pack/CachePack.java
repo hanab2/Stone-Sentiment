@@ -52,4 +52,14 @@ public class CachePack {
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
+
+    @Override
+    public String toString() {
+        return "CachePack{" +
+                "key='" + key + '\'' +
+                ", jsonStingValue='" + jsonStingValue + '\'' +
+                ", expireDuration=" + expireDuration +
+                ", timeUnit=" + timeUnit +
+                '}';
+    }
 }

@@ -16,13 +16,17 @@ public class DefaultCachePipeline implements CachePipeline {
 
     @Override
     public void store(CachePack cachePack) {
-        stringRedisTemplate.opsForHash()
-                .put(cachePack.getKey(), "targetValue", cachePack.getJsonStingValue());
-        stringRedisTemplate.expire(
-                cachePack.getKey(),
-                cachePack.getExpireDuration(),
-                cachePack.getTimeUnit()
-        );
+        stringRedisTemplate.opsForValue()
+                .set(cachePack.getKey(),cachePack.getJsonStingValue());
+//        stringRedisTemplate.opsForHash()
+//                .put(cachePack.getKey(), "targetValue", cachePack.getJsonStingValue());
+        if (cachePack.getExpireDuration() > 0){
+            stringRedisTemplate.expire(
+                    cachePack.getKey(),
+                    cachePack.getExpireDuration(),
+                    cachePack.getTimeUnit()
+            );
+        }
     }
 
     @Override
@@ -30,8 +34,8 @@ public class DefaultCachePipeline implements CachePipeline {
         if (StringUtils.isBlank(key)) {
             throw new NullPointerException("key为空");
         }
-        return (String) stringRedisTemplate.opsForHash()
-                .get(key, "targetValue");
+        return stringRedisTemplate.opsForValue()
+                .get(key);
     }
 
     @Override

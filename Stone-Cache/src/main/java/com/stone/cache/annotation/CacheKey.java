@@ -8,7 +8,7 @@ import java.lang.annotation.*;
  * @author hana_be@126.com
  * @date 2021-01-06
  */
-@Target(ElementType.PARAMETER)
+@Target(value = {ElementType.PARAMETER,ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface CacheKey {

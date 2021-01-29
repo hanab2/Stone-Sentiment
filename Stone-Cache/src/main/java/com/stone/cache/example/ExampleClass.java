@@ -1,10 +1,13 @@
 package com.stone.cache.example;
 
+import com.stone.cache.annotation.CacheKey;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class ExampleClass implements Serializable {
     private static final long serialVersionUID = 315405805675155375L;
+    @CacheKey
     private Long id;
     private String name;
     private LocalDateTime birth;

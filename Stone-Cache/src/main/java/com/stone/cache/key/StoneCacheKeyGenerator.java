@@ -2,12 +2,16 @@ package com.stone.cache.key;
 
 
 import com.stone.cache.annotation.CacheKey;
+import com.stone.cache.annotation.CacheTarget;
 import com.stone.cache.exception.CacheKeyException;
 import com.stone.cache.annotation.CacheProperties;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Objects;
@@ -23,6 +27,8 @@ import java.util.Objects;
 @Component
 public class StoneCacheKeyGenerator implements KeyGenerator {
 
+    private static final Logger log = LoggerFactory.getLogger(StoneCacheKeyGenerator.class);
+
     /**
      * 生成key
      * 根据key生成策略来生成
@@ -37,12 +43,25 @@ public class StoneCacheKeyGenerator implements KeyGenerator {
         CacheProperties properties = target.getClass().getAnnotation(CacheProperties.class);
         switch (properties.keyGenerateStrategy()) {
             case DEFAULT:
-                return defaultGenerate(target, method, params);
+                try {
+                    return defaultGenerate(target, method, params);
+                } catch (IllegalAccessException e) {
+                    log.warn(e.getMessage());
+                }
             case CUSTOM:
-                return costumeGenerate(target, method, params);
+                try {
+                    return costumeGenerate(target, method, params);
+                } catch (IllegalAccessException e) {
+                    log.warn(e.getMessage());
+                }
             default:
-                return defaultGenerate(target, method, params);
+                try {
+                    return defaultGenerate(target, method, params);
+                } catch (IllegalAccessException e) {
+                    log.warn(e.getMessage());
+                }
         }
+        throw new CacheKeyException("生成key失败，请检查相关参数~");
     }
 
 
@@ -58,7 +77,7 @@ public class StoneCacheKeyGenerator implements KeyGenerator {
      * @param params 调用方法参数列表
      * @return {@link String} Cache Key
      */
-    private String defaultGenerate(Object target, Method method, Object... params) {
+    private String defaultGenerate(Object target, Method method, Object... params) throws IllegalAccessException {
         CacheProperties properties = target.getClass().getAnnotation(CacheProperties.class);
         Object keySuffix = findKeySuffixFromMethodParameters(method.getParameters(), params);
         return getKeyByKeyParameters(properties.parametersSeparator(), keySuffix, properties.serviceName(), properties.tableName());
@@ -76,7 +95,7 @@ public class StoneCacheKeyGenerator implements KeyGenerator {
      * @param params 调用方法参数列表
      * @return {@link String} Cache Key
      */
-    private String costumeGenerate(Object target, Method method, Object... params) {
+    private String costumeGenerate(Object target, Method method, Object... params) throws IllegalAccessException {
         CacheProperties properties = target.getClass().getAnnotation(CacheProperties.class);
         Object keySuffix = findKeySuffixFromMethodParameters(method.getParameters(), params);
         return getKeyByKeyParameters(properties.parametersSeparator(), keySuffix, properties.customKeyPrefixParameters());
@@ -84,19 +103,41 @@ public class StoneCacheKeyGenerator implements KeyGenerator {
 
 
     /**
-     * 在参数列表中找到第一个被{@link CacheKey}标注的参数并返回该参数
+     * 执行以下操作
+     * 1.在参数列表中找到第一个被{@link CacheKey}标注的参数并返回该参数
+     * 2.在参数列表中找到第一个被{@link CacheTarget}标注的参数并返回该参数被{@link CacheKey}标注的字段并返回
      *
      * @param parameters 参数
      * @param params     参数列表
-     * @return {@link Object}* @throws CacheKeyException 缓存键例外  第一个被{@link CacheKey}标注的参数
+     * @return {@link Object}* @throws CacheKeyException 缓存key异常
      */
-    private Object findKeySuffixFromMethodParameters(Parameter[] parameters, Object[] params) throws CacheKeyException {
+    private Object findKeySuffixFromMethodParameters(Parameter[] parameters, Object[] params) throws CacheKeyException, IllegalAccessException {
         for (int i = 0; i < params.length; i++) {
             if (parameters[i].isAnnotationPresent(CacheKey.class)) {
                 return params[i];
+            }else if (parameters[i].isAnnotationPresent(CacheTarget.class)){
+                return findKeySuffixFromTargetFields(params[i]);
             }
         }
         throw new CacheKeyException("没有找到@CacheKey修饰的参数！~");
+    }
+
+    /**
+     * 找到目标对象中被{@link CacheKey}标注的字段并返回
+     *
+     * @param target 目标
+     * @return {@link Object}* @throws IllegalAccessException 非法访问异常
+     */
+    private Object findKeySuffixFromTargetFields(Object target) throws IllegalAccessException {
+        Class<?> clazz = target.getClass();
+        Field[] fields = clazz.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            if (field.isAnnotationPresent(CacheKey.class)) {
+                return field.get(target);
+            }
+        }
+        throw new CacheKeyException("没有在@CacheTarget修饰类中找到@CacheKey修饰的字段！~");
     }
 
     /**

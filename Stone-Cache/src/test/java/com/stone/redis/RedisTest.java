@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 public class RedisTest {
@@ -40,11 +41,35 @@ public class RedisTest {
 
         ExampleClass exampleClass = new ExampleClass();
         exampleClass.setBirth(LocalDateTime.now());
-        exampleClass.setId(2123141L);
+        exampleClass.setId(2141L);
         exampleClass.setName("name");
 
         stringRedisTemplate.opsForValue().set(exampleClass.getName(), JSON.toJSONString(exampleClass));
+        stringRedisTemplate.expire("name",1000L, TimeUnit.MINUTES);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     @Resource
@@ -54,16 +79,26 @@ public class RedisTest {
     void putTest() {
         ExampleClass exampleClass = new ExampleClass();
         exampleClass.setBirth(LocalDateTime.now());
-        exampleClass.setId(211L);
-        exampleClass.setName("name");
+        exampleClass.setId(167L);
+        exampleClass.setName("name55");
 
         boolean put = exampleService.put(exampleClass.getId(), exampleClass);
         System.out.println(put);
     }
 
     @Test
+    void insertTest(){
+        ExampleClass exampleClass = new ExampleClass();
+        exampleClass.setBirth(LocalDateTime.now());
+        exampleClass.setId(167L);
+        exampleClass.setName("name167");
+        boolean insert = exampleService.insert(exampleClass);
+        System.out.println(insert);
+    }
+
+    @Test
     void fetchTest(){
-        Object fetch = exampleService.fetch(233L);
+        Object fetch = exampleService.fetch(167L);
         System.out.println(fetch);
     }
 

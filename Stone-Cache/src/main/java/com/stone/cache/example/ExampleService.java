@@ -34,6 +34,12 @@ public class ExampleService {
         return true;
     }
 
+    @CachePut
+    public boolean insert(@CacheTarget Object object){
+        log.info("value:  {}  has been put",object);
+        return true;
+    }
+
     @CacheDelete
     public boolean delete(@CacheKey Long id) {
         log.info("key:  {}  has been deleted",id);

@@ -32,7 +32,7 @@ public class DefaultExpireStrategyExtractor implements ExpireStrategyExtractor {
             case CUSTOM:
                 return cacheProperties.expireDuration();
             default:
-                return null;
+                return -1L;
         }
     }
 
