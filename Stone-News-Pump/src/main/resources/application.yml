@@ -4,3 +4,11 @@ spring:
       host: 127.0.0.1
       port: 27017
       database: sentiment
+#    elasticsearch:
+#      repositories:
+#        enabled: true
+  elasticsearch:
+    rest:
+      uris:
+        - 192.168.148.151:9200
+        - 192.168.148.152:9200

@@ -7,38 +7,38 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "news")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "stone_news")
-public class News {
-
-    @MongoId
+@Document(indexName = "sentiment_news_test")
+public class TestNews implements Serializable {
+    private static final long serialVersionUID = 922839524176213460L;
     @Id
-    private Long id;
+    private Long newsId;
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String title;
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String body;
     @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
-    private String source;
+    private String summary;
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    private String referencePath;
+    @Field(type = FieldType.Auto, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @JSONField(format = "yyyy-MM-dd HH:mm:ss")
-    @Field(type = FieldType.Date, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date time;
+    private LocalDateTime embodyTime;
     @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
-    private String sentiment;
-    @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
-    private String location;
-
+    private List<String> tagList;
+    @Field(type = FieldType.Integer)
+    private Integer status;
 }

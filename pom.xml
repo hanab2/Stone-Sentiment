@@ -12,7 +12,7 @@
     <modules>
         <module>Resource-Common</module>
         <module>Consumer-Client</module>
-        <module>Provider-Article</module>
+        <module>Provider-News</module>
         <module>Provider-User</module>
         <module>Stone-Spider</module>
         <module>Stone-NLP</module>
@@ -177,6 +177,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>2.3.0.RELEASE</version>
             </dependency>
             <!-- https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter -->
             <dependency>
