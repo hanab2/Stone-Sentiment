@@ -8,4 +8,8 @@ import java.util.List;
 public interface NewsService {
 
     List<WordCount> wordCount(LocalDateTime timeFloor, int size);
+
+    List<WordCount> locationCount(LocalDateTime timeFloor, int size);
+
+    List<WordCount> sentimentCount(LocalDateTime timeFloor, int size);
 }

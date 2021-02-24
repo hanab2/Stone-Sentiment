@@ -27,8 +27,4 @@ public class NewsMapperTest {
 
     }
 
-    @Test
-    void testLocationCount() {
-        newsMapper.locationCount();
-    }
 }

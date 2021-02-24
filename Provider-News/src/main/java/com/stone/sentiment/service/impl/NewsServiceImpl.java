@@ -19,4 +19,14 @@ public class NewsServiceImpl implements NewsService {
     public List<WordCount> wordCount(LocalDateTime timeFloor, int size) {
         return newsMapper.wordCount(timeFloor, size);
     }
+
+    @Override
+    public List<WordCount> locationCount(LocalDateTime timeFloor, int size) {
+        return newsMapper.locationCount(timeFloor, size);
+    }
+
+    @Override
+    public List<WordCount> sentimentCount(LocalDateTime timeFloor, int size) {
+        return newsMapper.sentimentCount(timeFloor, size);
+    }
 }

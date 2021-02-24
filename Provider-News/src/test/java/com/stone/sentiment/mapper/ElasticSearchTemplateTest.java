@@ -132,11 +132,9 @@ public class ElasticSearchTemplateTest {
         long start = System.currentTimeMillis();
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         NativeSearchQuery query = queryBuilder
-                .withPageable(PageRequest.of(0, 10))
+                .withPageable(PageRequest.of(0, 30))
                 .withFilter(QueryBuilders.boolQuery()
-//                        .must(QueryBuilders.matchQuery("title", "美"))
-//                        .must(QueryBuilders.matchQuery("location", "美"))
-                                .must(QueryBuilders.rangeQuery("time").gte(LocalDateTime.now().minusDays(17).toInstant(ZoneOffset.of("+8")).toEpochMilli()))
+                        .must(QueryBuilders.rangeQuery("time").gte(LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.of("+8")).toEpochMilli()))
                 )
                 .withSort(SortBuilders.fieldSort("time").order(SortOrder.DESC))
                 .addAggregation(

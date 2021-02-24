@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
         log.warn("{}", exception.getMessage());
         return CommonResultBean.builder()
                 .code(500)
+                .success(false)
                 .message("服务器内部错误")
                 .data("服务器内部错误")
                 .build();

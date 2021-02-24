@@ -29,8 +29,37 @@ public class NewsController {
         localDateTime = localDateTime.minusDays(30);
         return CommonResultBean.builder()
                 .code(200)
+                .success(true)
                 .message("词频统计完毕")
                 .data(newsService.wordCount(localDateTime, size))
+                .build();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = {"/location_count"})
+    public CommonResultBean locationCount(@RequestParam("time_floor") Long timestamp, @RequestParam(value = "size", defaultValue = "20") Integer size) {
+        LocalDateTime localDateTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+        localDateTime = localDateTime.minusDays(30);
+        return CommonResultBean.builder()
+                .code(200)
+                .success(true)
+                .message("地名统计完毕")
+                .data(newsService.locationCount(localDateTime, size))
+                .build();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = {"/sentiment_count"})
+    public CommonResultBean sentimentCount(@RequestParam("time_floor") Long timestamp, @RequestParam(value = "size", defaultValue = "20") Integer size) {
+        LocalDateTime localDateTime =
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+        localDateTime = localDateTime.minusDays(30);
+        return CommonResultBean.builder()
+                .code(200)
+                .success(true)
+                .message("地名统计完毕")
+                .data(newsService.sentimentCount(localDateTime, size))
                 .build();
     }
 

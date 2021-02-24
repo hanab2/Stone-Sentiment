@@ -33,16 +33,19 @@ public class Pump {
 
     @PostConstruct
     private void init() {
-
     }
 
     public void pump() {
         log.debug("start pump");
         Query query = new Query()
                 .addCriteria(Criteria.where("status").is(1))
-                .limit(10);
+                .limit(100);
         List<News> newsList = mongoTemplate.find(query, News.class);
         elasticsearchRestTemplate.save(newsList);
+        newsList.forEach(news -> {
+            news.setStatus(2);
+            mongoTemplate.save(news);
+        });
         log.debug("end pump");
     }
 
