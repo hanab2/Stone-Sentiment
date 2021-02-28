@@ -1,5 +1,6 @@
 package com.stone.sentiment.mapper;
 
+import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.model.view.WordCount;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,15 @@ public class NewsMapperTest {
         System.out.println(wordCountList);
         System.out.println(System.currentTimeMillis() - start);
 
+    }
+
+    @Test
+    void testLocationSentimentAnalysis(){
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(20);
+        JSONObject jsonObject = newsMapper.locationSentimentAnalysis(localDateTime);
+        System.out.println(jsonObject);
+        System.out.println("-------------");
+        System.out.println(jsonObject.toJSONString());
     }
 
 }

@@ -43,7 +43,7 @@ public class UserController {
             user.setPassword(null);
         }
         return CommonResultBean.builder()
-                .isSuccessful(true)
+                .success(true)
                 .code(200)
                 .message("查询用户成功")
                 .data(user)
@@ -60,7 +60,7 @@ public class UserController {
                 .build();
         commonResultBean.setData(pageResultBean);
         commonResultBean.setCode(200);
-        commonResultBean.setIsSuccessful(true);
+        commonResultBean.setSuccess(true);
         return commonResultBean;
     }
 
@@ -73,14 +73,14 @@ public class UserController {
         if (flag) {
             return CommonResultBean.builder()
                     .code(200)
-                    .isSuccessful(true)
+                    .success(true)
                     .message("新增用户成功")
                     .data("新增用户成功")
                     .build();
         }
         return CommonResultBean.builder()
                 .code(500)
-                .isSuccessful(false)
+                .success(false)
                 .message("新增用户失败")
                 .data("新增用户失败")
                 .build();
@@ -92,14 +92,14 @@ public class UserController {
         if (flag) {
             return CommonResultBean.builder()
                     .code(200)
-                    .isSuccessful(true)
+                    .success(true)
                     .message("删除用户成功")
                     .data("删除用户成功")
                     .build();
         }
         return CommonResultBean.builder()
                 .code(500)
-                .isSuccessful(false)
+                .success(false)
                 .message("删除用户失败")
                 .data("删除用户失败")
                 .build();
@@ -111,14 +111,14 @@ public class UserController {
         if (flag) {
             return CommonResultBean.builder()
                     .code(200)
-                    .isSuccessful(true)
+                    .success(true)
                     .message("修改用户成功")
                     .data("修改用户成功")
                     .build();
         }
         return CommonResultBean.builder()
                 .code(500)
-                .isSuccessful(false)
+                .success(false)
                 .message("修改用户失败")
                 .data("修改用户失败")
                 .build();

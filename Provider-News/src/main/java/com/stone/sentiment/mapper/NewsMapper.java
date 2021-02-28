@@ -1,14 +1,18 @@
 package com.stone.sentiment.mapper;
 
+
+import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.model.News;
 import com.stone.sentiment.model.Word;
 import com.stone.sentiment.model.view.WordCount;
 import org.bson.Document;
-import org.elasticsearch.action.search.SearchResponse;
+
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
+
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -32,6 +36,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+
 @Repository
 public class NewsMapper {
     @Resource
@@ -50,13 +55,11 @@ public class NewsMapper {
         AggregationResults<Document> result = mongoTemplate.aggregate(aggregation, Document.class);
         List<Document> documentList = result.getMappedResults();
         LinkedList<WordCount> wordCountList = new LinkedList<>();
-        documentList.forEach(document -> {
-            wordCountList.addLast(
-                    WordCount.builder()
-                            .word(document.getString("_id"))
-                            .count(document.getInteger("count"))
-                            .build());
-        });
+        documentList.forEach(document -> wordCountList.addLast(
+                WordCount.builder()
+                        .word(document.getString("_id"))
+                        .count(document.getInteger("count"))
+                        .build()));
         return wordCountList;
     }
 
@@ -80,13 +83,11 @@ public class NewsMapper {
         }
         Map<String, org.elasticsearch.search.aggregations.Aggregation> map = aggregations.getAsMap();
         ParsedStringTerms locationCount = (ParsedStringTerms) map.get("location_count");
-        locationCount.getBuckets().forEach(bucket -> {
-            wordCountList.addLast(
-                    WordCount.builder()
-                            .word(bucket.getKeyAsString())
-                            .count((int) bucket.getDocCount())
-                            .build());
-        });
+        locationCount.getBuckets().forEach(bucket -> wordCountList.addLast(
+                WordCount.builder()
+                        .word(bucket.getKeyAsString())
+                        .count((int) bucket.getDocCount())
+                        .build()));
         return wordCountList;
     }
 
@@ -103,6 +104,7 @@ public class NewsMapper {
                         AggregationBuilders.terms("sentiment_count").field("sentiment.keyword")
                 )
                 .build();
+        @SuppressWarnings("DuplicatedCode")
         SearchHits<News> search = elasticsearchRestTemplate.search(query, News.class);
         Aggregations aggregations = search.getAggregations();
         if (aggregations == null) {
@@ -110,14 +112,46 @@ public class NewsMapper {
         }
         Map<String, org.elasticsearch.search.aggregations.Aggregation> map = aggregations.getAsMap();
         ParsedStringTerms locationCount = (ParsedStringTerms) map.get("sentiment_count");
-        locationCount.getBuckets().forEach(bucket -> {
-            wordCountList.addLast(
-                    WordCount.builder()
-                            .word(bucket.getKeyAsString())
-                            .count((int) bucket.getDocCount())
-                            .build());
-        });
+        locationCount.getBuckets().forEach(bucket -> wordCountList.addLast(
+                WordCount.builder()
+                        .word(bucket.getKeyAsString())
+                        .count((int) bucket.getDocCount())
+                        .build()));
         return wordCountList;
     }
+
+    public JSONObject locationSentimentAnalysis(LocalDateTime timeFloor) {
+        JSONObject result = new JSONObject();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder
+                .withFilter(QueryBuilders.boolQuery()
+                        .must(QueryBuilders.rangeQuery("time").gte(timeFloor.toInstant(ZoneOffset.of("+8")).toEpochMilli()))
+                )
+                .addAggregation(
+                        AggregationBuilders
+                                .dateHistogram("time_aggregation")
+                                .field("time")
+                                .calendarInterval(DateHistogramInterval.DAY)
+                                .minDocCount(0)
+                                .subAggregation(
+                                        AggregationBuilders
+                                                .terms("sentiment_aggregation")
+                                                .field("sentiment.keyword")
+                                )
+                );
+        SearchHits<News> search = elasticsearchRestTemplate.search(queryBuilder.build(), News.class);
+        @SuppressWarnings("ConstantConditions")
+        ParsedDateHistogram timeAggregation = search.getAggregations().get("time_aggregation");
+        timeAggregation.getBuckets().forEach(timeBucket -> {
+            if (timeBucket.getDocCount() > 0) {
+                ParsedStringTerms sentimentAggregation = timeBucket.getAggregations().get("sentiment_aggregation");
+                JSONObject sentiment = new JSONObject();
+                sentimentAggregation.getBuckets().forEach(sentimentBucket -> sentiment.put(sentimentBucket.getKeyAsString(), sentimentBucket.getDocCount()));
+                result.put(timeBucket.getKeyAsString(), sentiment);
+            }
+        });
+        return result;
+    }
+
 
 }

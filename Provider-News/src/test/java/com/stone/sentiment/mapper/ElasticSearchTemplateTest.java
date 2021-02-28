@@ -3,12 +3,11 @@ package com.stone.sentiment.mapper;
 import com.stone.sentiment.model.News;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.aggregations.Aggregation;
-import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
+import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -172,6 +171,38 @@ public class ElasticSearchTemplateTest {
         ParsedStringTerms location_count = (ParsedStringTerms) map.get("location_count");
         location_count.getBuckets().forEach(bucket -> {
             System.out.println(bucket.getKey() + "----" + bucket.getDocCount());
+        });
+        System.out.println("耗时： " + (System.currentTimeMillis() - start));
+    }
+
+    @Test
+    void testHistogram() {
+        long start = System.currentTimeMillis();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder
+                .addAggregation(
+                        AggregationBuilders
+                                .dateHistogram("dateBucket")
+                                .field("time")
+//                                .format("yyyy-MM-dd")
+                                .calendarInterval(DateHistogramInterval.DAY)
+//                                .minDocCount(0)
+                                .subAggregation(
+                                        AggregationBuilders
+                                                .terms("location")
+                                                .field("location.keyword")
+                                )
+                );
+        SearchHits<News> search = elasticsearchRestTemplate.search(queryBuilder.build(), News.class);
+        Aggregation dateBucket = search.getAggregations().get("dateBucket");
+        ParsedDateHistogram bucket = (ParsedDateHistogram) dateBucket;
+        bucket.getBuckets().forEach(item -> {
+            System.out.println(item.getKeyAsString() + "----" + item.getDocCount());
+            ParsedStringTerms location = item.getAggregations().get("location");
+            location.getBuckets().forEach(i -> {
+                System.out.println(i.getKeyAsString() + i.getDocCount());
+            });
+            System.out.println("=======");
         });
         System.out.println("耗时： " + (System.currentTimeMillis() - start));
     }
