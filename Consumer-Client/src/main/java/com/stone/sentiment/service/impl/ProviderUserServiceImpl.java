@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Component
 public class ProviderUserServiceImpl implements ProviderUserService {
     @Override
-    public CommonResultBean<User> test() {
+    public CommonResultBean test() {
         System.out.println("rpc");
-        return new CommonResultBean<User>(4444,"降级",false,null);
+        return new CommonResultBean(4444,"降级",false,null);
     }
 }

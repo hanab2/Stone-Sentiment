@@ -2,6 +2,7 @@ package com.stone.sentiment.controller;
 
 import com.stone.sentiment.bean.CommonResultBean;
 
+import com.stone.sentiment.manager.TimeManager;
 import com.stone.sentiment.service.NewsService;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,10 +21,12 @@ public class NewsController {
 
     @Resource
     NewsService newsService;
+    @Resource
+    TimeManager timeManager;
 
     @CrossOrigin
     @GetMapping(value = {"/word_count"})
-    public CommonResultBean wordCount(@RequestParam("time_floor") Long timestamp, @RequestParam(value = "size", defaultValue = "20") Integer size) {
+    public CommonResultBean wordCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
         LocalDateTime localDateTime =
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
         localDateTime = localDateTime.minusDays(30);
@@ -37,7 +40,7 @@ public class NewsController {
 
     @CrossOrigin
     @GetMapping(value = {"/location_count"})
-    public CommonResultBean locationCount(@RequestParam("time_floor") Long timestamp, @RequestParam(value = "size", defaultValue = "20") Integer size) {
+    public CommonResultBean locationCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
         LocalDateTime localDateTime =
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
         localDateTime = localDateTime.minusDays(30);
@@ -51,7 +54,7 @@ public class NewsController {
 
     @CrossOrigin
     @GetMapping(value = {"/sentiment_count"})
-    public CommonResultBean sentimentCount(@RequestParam("time_floor") Long timestamp, @RequestParam(value = "size", defaultValue = "20") Integer size) {
+    public CommonResultBean sentimentCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
         LocalDateTime localDateTime =
                 LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
         localDateTime = localDateTime.minusDays(30);
@@ -64,4 +67,18 @@ public class NewsController {
     }
 
 
+    @CrossOrigin
+    @GetMapping(value = {"/time_sentiment_analysis"})
+    public CommonResultBean timeSentimentAnalysis(@RequestParam(name = "time_floor", defaultValue = "0") long timestamp) {
+        return CommonResultBean.builder()
+                .code(200)
+                .success(true)
+                .message("时间情感分析完毕")
+                .data(
+                        newsService.timeSentimentAnalysis(
+                                timeManager.getValidDayFloor(timestamp)
+                        )
+                )
+                .build();
+    }
 }

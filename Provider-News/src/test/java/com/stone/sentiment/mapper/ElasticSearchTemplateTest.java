@@ -1,6 +1,7 @@
 package com.stone.sentiment.mapper;
 
 import com.stone.sentiment.model.News;
+import com.stone.sentiment.model.view.NewsView;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
@@ -53,6 +54,13 @@ public class ElasticSearchTemplateTest {
     void testSearchById() {
         News news = elasticsearchRestTemplate.get("1361899194528301056", News.class);
         System.out.println(news);
+    }
+
+    @Test
+    void testSearchView() {
+        NativeSearchQuery query = new NativeSearchQueryBuilder().withQuery(QueryBuilders.termsQuery("sentiment", "negative")).build();
+        SearchHit<NewsView> searchHit = elasticsearchRestTemplate.searchOne(query, NewsView.class);
+        System.out.println(searchHit.getContent());
     }
 
     @Test

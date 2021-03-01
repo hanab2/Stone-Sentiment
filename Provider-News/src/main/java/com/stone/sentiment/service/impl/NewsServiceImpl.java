@@ -1,5 +1,6 @@
 package com.stone.sentiment.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.mapper.NewsMapper;
 import com.stone.sentiment.model.view.WordCount;
 import com.stone.sentiment.service.NewsService;
@@ -28,5 +29,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public List<WordCount> sentimentCount(LocalDateTime timeFloor, int size) {
         return newsMapper.sentimentCount(timeFloor, size);
+    }
+
+    @Override
+    public JSONObject timeSentimentAnalysis(LocalDateTime timeFloor) {
+        return newsMapper.timeSentimentAnalysis(timeFloor);
     }
 }

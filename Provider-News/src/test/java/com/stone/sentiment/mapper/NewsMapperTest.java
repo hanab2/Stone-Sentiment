@@ -29,9 +29,9 @@ public class NewsMapperTest {
     }
 
     @Test
-    void testLocationSentimentAnalysis(){
+    void testTimeSentimentAnalysis(){
         LocalDateTime localDateTime = LocalDateTime.now().minusDays(20);
-        JSONObject jsonObject = newsMapper.locationSentimentAnalysis(localDateTime);
+        JSONObject jsonObject = newsMapper.timeSentimentAnalysis(localDateTime);
         System.out.println(jsonObject);
         System.out.println("-------------");
         System.out.println(jsonObject.toJSONString());

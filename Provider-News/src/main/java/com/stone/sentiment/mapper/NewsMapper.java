@@ -120,7 +120,7 @@ public class NewsMapper {
         return wordCountList;
     }
 
-    public JSONObject locationSentimentAnalysis(LocalDateTime timeFloor) {
+    public JSONObject timeSentimentAnalysis(LocalDateTime timeFloor) {
         JSONObject result = new JSONObject();
         NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
         queryBuilder
