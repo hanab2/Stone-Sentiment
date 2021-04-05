@@ -1,9 +1,11 @@
 package com.stone.sentiment.mapper;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.model.News;
 import com.stone.sentiment.model.Word;
+import com.stone.sentiment.model.view.SimilarTextNewsView;
 import com.stone.sentiment.model.view.WordCount;
 import org.bson.Document;
 
@@ -150,6 +152,30 @@ public class NewsMapper {
                 result.put(timeBucket.getKeyAsString(), sentiment);
             }
         });
+        return result;
+    }
+
+    public JSONArray similarTextSearch(String text, LocalDateTime timeFloor) {
+        JSONArray result = new JSONArray();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        queryBuilder
+                .withPageable(PageRequest.of(0,30))
+                .withQuery(
+                        QueryBuilders
+                                .boolQuery()
+                                .must(
+                                        QueryBuilders
+                                                .multiMatchQuery(text, "title", "body")
+                                )
+                )
+                .withFilter(QueryBuilders.boolQuery()
+                        .must(QueryBuilders.rangeQuery("time").gte(timeFloor.toInstant(ZoneOffset.of("+8")).toEpochMilli()))
+                );
+        SearchHits<SimilarTextNewsView> search = elasticsearchRestTemplate.search(queryBuilder.build(), SimilarTextNewsView.class);
+        search.get()
+                .forEach(newsSearchHit -> {
+                    result.add(newsSearchHit.getContent());
+                });
         return result;
     }
 

@@ -1,15 +1,13 @@
 package com.stone.sentiment.mapper;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.model.view.WordCount;
-import org.bson.Document;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.LinkedList;
 import java.util.List;
 
 @SpringBootTest
@@ -35,6 +33,16 @@ public class NewsMapperTest {
         System.out.println(jsonObject);
         System.out.println("-------------");
         System.out.println(jsonObject.toJSONString());
+    }
+
+    @Test
+    void  testSimilarTextAnalysis(){
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(20);
+        JSONArray jsonArray = newsMapper.similarTextSearch("美", localDateTime);
+        jsonArray.forEach(
+                System.out::println
+        );
+        System.out.println();
     }
 
 }

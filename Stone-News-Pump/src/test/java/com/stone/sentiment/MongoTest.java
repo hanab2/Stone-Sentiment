@@ -31,7 +31,7 @@ public class MongoTest {
 
     @Test
     void testFindById() {
-        News news = mongoTemplate.findById(1357985453684293632L, News.class);
+        News news = mongoTemplate.findById(1371353479687176192L, News.class);
         System.out.println(news);
         assert news != null;
         System.out.println(news.getTime());

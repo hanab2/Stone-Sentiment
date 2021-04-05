@@ -1,5 +1,6 @@
 package com.stone.sentiment.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.sentiment.mapper.NewsMapper;
 import com.stone.sentiment.model.view.WordCount;
@@ -34,5 +35,10 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public JSONObject timeSentimentAnalysis(LocalDateTime timeFloor) {
         return newsMapper.timeSentimentAnalysis(timeFloor);
+    }
+
+    @Override
+    public JSONArray similarTextSearch(String text, LocalDateTime timeFloor) {
+        return newsMapper.similarTextSearch(text, timeFloor);
     }
 }

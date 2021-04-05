@@ -26,43 +26,37 @@ public class NewsController {
 
     @CrossOrigin
     @GetMapping(value = {"/word_count"})
-    public CommonResultBean wordCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
-        LocalDateTime localDateTime =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-        localDateTime = localDateTime.minusDays(30);
+    public CommonResultBean wordCount(@RequestParam(name = "time_floor", defaultValue = "0") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
         return CommonResultBean.builder()
                 .code(200)
                 .success(true)
                 .message("词频统计完毕")
-                .data(newsService.wordCount(localDateTime, size))
+                .data(newsService.wordCount(timeManager.getValidDayFloor(timestamp), size))
                 .build();
     }
 
     @CrossOrigin
     @GetMapping(value = {"/location_count"})
-    public CommonResultBean locationCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
-        LocalDateTime localDateTime =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-        localDateTime = localDateTime.minusDays(30);
+    public CommonResultBean locationCount(@RequestParam(name = "time_floor", defaultValue = "0") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
         return CommonResultBean.builder()
                 .code(200)
                 .success(true)
                 .message("地名统计完毕")
-                .data(newsService.locationCount(localDateTime, size))
+                .data(newsService.locationCount(timeManager.getValidDayFloor(timestamp), size))
                 .build();
     }
 
     @CrossOrigin
     @GetMapping(value = {"/sentiment_count"})
-    public CommonResultBean sentimentCount(@RequestParam("time_floor") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
-        LocalDateTime localDateTime =
-                LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
-        localDateTime = localDateTime.minusDays(30);
+    public CommonResultBean sentimentCount(@RequestParam(name = "time_floor", defaultValue = "0") long timestamp, @RequestParam(value = "size", defaultValue = "20") int size) {
+
         return CommonResultBean.builder()
                 .code(200)
                 .success(true)
                 .message("地名统计完毕")
-                .data(newsService.sentimentCount(localDateTime, size))
+                .data(
+                        newsService.sentimentCount(timeManager.getValidDayFloor(timestamp), size)
+                )
                 .build();
     }
 
@@ -78,6 +72,19 @@ public class NewsController {
                         newsService.timeSentimentAnalysis(
                                 timeManager.getValidDayFloor(timestamp)
                         )
+                )
+                .build();
+    }
+
+    @CrossOrigin
+    @GetMapping(value = {"/similar_text"})
+    public CommonResultBean similarTextSearch(@RequestParam(name = "text", defaultValue = "") String text, @RequestParam(name = "timestamp", defaultValue = "0") long timestamp) {
+        return CommonResultBean.builder()
+                .code(200)
+                .success(true)
+                .message("相似文本查询完毕")
+                .data(
+                        newsService.similarTextSearch(text, timeManager.getValidDayFloor(timestamp))
                 )
                 .build();
     }

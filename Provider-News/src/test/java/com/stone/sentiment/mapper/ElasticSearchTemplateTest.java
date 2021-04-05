@@ -7,6 +7,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.MultiBucketsAggregation;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 import org.elasticsearch.search.aggregations.bucket.histogram.ParsedDateHistogram;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
@@ -52,7 +53,7 @@ public class ElasticSearchTemplateTest {
 
     @Test
     void testSearchById() {
-        News news = elasticsearchRestTemplate.get("1361899194528301056", News.class);
+        News news = elasticsearchRestTemplate.get("1371353479687176192", News.class);
         System.out.println(news);
     }
 
@@ -202,8 +203,10 @@ public class ElasticSearchTemplateTest {
                                 )
                 );
         SearchHits<News> search = elasticsearchRestTemplate.search(queryBuilder.build(), News.class);
+        System.out.println(search.getAggregations().getAsMap());
         Aggregation dateBucket = search.getAggregations().get("dateBucket");
-        ParsedDateHistogram bucket = (ParsedDateHistogram) dateBucket;
+//        ParsedDateHistogram bucket = (ParsedDateHistogram) dateBucket;
+        MultiBucketsAggregation bucket = (MultiBucketsAggregation) dateBucket;
         bucket.getBuckets().forEach(item -> {
             System.out.println(item.getKeyAsString() + "----" + item.getDocCount());
             ParsedStringTerms location = item.getAggregations().get("location");
@@ -213,6 +216,46 @@ public class ElasticSearchTemplateTest {
             System.out.println("=======");
         });
         System.out.println("耗时： " + (System.currentTimeMillis() - start));
+    }
+
+    @Test
+    void testSimilaritySearch() {
+        //MultiBucketsAggregation
+        long start = System.currentTimeMillis();
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
+        boolQuery
+                .must(QueryBuilders.matchQuery("title", "武汉"));
+        NativeSearchQuery query = new NativeSearchQuery(boolQuery)
+                .setPageable(PageRequest.of(0, 40));
+        SearchHits<News> search = elasticsearchRestTemplate.search(query, News.class);
+        System.out.println(search.getMaxScore());
+        search.getSearchHits().forEach(newsSearchHit -> {
+            System.out.println(newsSearchHit.getScore() + ":" + newsSearchHit.getContent().getTitle());
+        });
+        System.out.println("耗时： " + (System.currentTimeMillis() - start));
+    }
+
+    @Test
+    void testTagAggregation(){
+        long start = System.currentTimeMillis();
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        NativeSearchQuery query = queryBuilder
+                .withPageable(PageRequest.of(0, 10))
+                .withFilter(QueryBuilders.boolQuery()
+                        .must(QueryBuilders.rangeQuery("time").gte(LocalDateTime.now().minusDays(17).toInstant(ZoneOffset.of("+8")).toEpochMilli()))
+                )
+                .withSort(SortBuilders.fieldSort("time").order(SortOrder.DESC))
+                .addAggregation(
+                        AggregationBuilders.terms("tag_count").field("tag.keyword")
+                )
+                .build();
+        SearchHits<News> search = elasticsearchRestTemplate.search(query, News.class);
+        Map<String, Aggregation> map = Objects.requireNonNull(search.getAggregations()).getAsMap();
+        ParsedStringTerms location_count = (ParsedStringTerms) map.get("tag_count");
+        location_count.getBuckets().forEach(bucket -> {
+            System.out.println("标签名："+bucket.getKey() + "\t数量：" + bucket.getDocCount());
+        });
+        System.out.println("舆情分类统计耗时： " + (System.currentTimeMillis() - start)+"毫秒");
     }
 
     public static void main(String[] args) {

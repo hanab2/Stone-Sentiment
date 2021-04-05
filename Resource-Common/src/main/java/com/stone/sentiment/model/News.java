@@ -40,6 +40,8 @@ public class News {
     private String sentiment;
     @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
     private String location;
+    @Field(analyzer = "ik_max_word", searchAnalyzer = "ik_max_word")
+    private String tag;
     @Field(index = false)
     private Integer status;
 
