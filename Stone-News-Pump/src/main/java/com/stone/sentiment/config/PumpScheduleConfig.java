@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 @SpringBootConfiguration
 @EnableScheduling
 public class PumpScheduleConfig {
-
+//
     private static final Logger log = LoggerFactory.getLogger(PumpScheduleConfig.class);
 
     @Resource
